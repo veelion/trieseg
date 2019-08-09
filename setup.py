@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# author: veelion
 
 import sys
 import subprocess
@@ -32,7 +33,7 @@ if __name__ == "__main__":
         author="Veelion chong",
         author_email="veelion@gmail.com",
         license='MIT',
-        description=("fast tool for Chinese word segmentation using trie-tree(cedar),"
+        description=("fast tool for Chinese word segmentation using trie-tree(cedar), new-word finding, "
                      "implemented in C++, wrapped to Python"),
         packages=['trieseg'],
         package_dir={'trieseg': ''},
