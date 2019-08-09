@@ -226,15 +226,15 @@ void WordFinder::Find(int min_frequency, int min_jointy, int min_entropy,
 
 void WordFinder::Find(int min_frequency, int min_jointy, int min_entropy,
     const char* save_to_path) {
-    vector<NewWord> newwords;
-    Find(min_frequency, min_jointy, min_entropy, newwords);
-    ofstream ofs(save_to_path);
-    if (!ofs) {
-        cout << "Can't open file: " << save_to_path << endl;
-        return;
-    }
-    for (auto& w : newwords) {
-        ofs << w.word << " " << w.frequency << " " << w.jointy << " " << w.entropy << endl;
-    }
-    ofs.close();
+  vector<NewWord> newwords;
+  Find(min_frequency, min_jointy, min_entropy, newwords);
+  ofstream ofs(save_to_path);
+  if (!ofs) {
+    cout << "Can't open file: " << save_to_path << endl;
+    return;
+  }
+  for (auto& w : newwords) {
+    ofs << w.word << " " << w.frequency << " " << w.jointy << " " << w.entropy << endl;
+  }
+  ofs.close();
 }
