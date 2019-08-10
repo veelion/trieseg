@@ -1,5 +1,6 @@
 #include "trie_seg.h"
 
+#include <sys/time.h>
 #include <iostream>
 #include <fstream>
 #include <vector>

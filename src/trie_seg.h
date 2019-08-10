@@ -9,7 +9,6 @@ All rights reserved.
 
 #include <cstring>
 #include <stdint.h>
-#include <sys/time.h>
 #include <string>
 #include <vector>
 #include <map>
@@ -19,7 +18,7 @@ All rights reserved.
 #include "utf8.h"
 
 
-int parse_line(char* line, std::string& word);
+int parse_line(const char* line, std::string& word);
 void make_dict(const char* word_file,
     const char* save_file);
 

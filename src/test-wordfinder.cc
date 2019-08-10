@@ -34,7 +34,7 @@ int main(int argc, char* argv[]) {
   wf.Feed(doc);
 
   vector<NewWord> newwords;
-  wf.Find(1, 1, 1, newwords);
+  wf.FindCore(1, 1, 1, newwords);
 
   sort(newwords.begin(), newwords.end(), [](NewWord& a, NewWord& b) { return a.entropy > b.entropy; });
   cout << "newwords: " << newwords.size() << endl;

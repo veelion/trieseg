@@ -10,8 +10,14 @@ All rights reserved.
 #include <cmath>
 #include <stdexcept>
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <vector>
+
+#if defined(_MSC_VER)
+#include <BaseTsd.h>
+typedef SSIZE_T ssize_t;
+#endif
 
 using namespace std;
 
@@ -44,22 +50,21 @@ TrieSegger::~TrieSegger() {
 }
 
 void TrieSegger::LoadCustomeWord(const char* path) {
-  FILE* fp = std::fopen (path, "r");
-  if (!fp) {
+  ifstream ifs(path);
+  if (!ifs) {
     cout << CLI_RED << "Can't open word file: " << path << CLI_NOR << endl;
     return;
   }
-  char* line = NULL;
-  ssize_t read = 0;
-  size_t  size = 0;
+  string line;
   int no_value_cnt = 0;
   string word;
-  while ((read = getline (&line, &size, fp)) != -1){
+  while (!ifs.eof()){
+    getline(ifs, line);
     if(line[0] == '#') {
       std::fprintf(stderr, "comment:%s\n", line);
       continue;
     }
-    int n = parse_line(line, word);
+    int n = parse_line(line.c_str(), word);
     if (n == 1) {
       no_value_cnt++;
       if(no_value_cnt < 10){
@@ -70,10 +75,7 @@ void TrieSegger::LoadCustomeWord(const char* path) {
       trie_->update(word.c_str(), word.size(), n);
     }
   }
-  std::fclose(fp);
-  if (line) {
-    cout << "free line" << endl;
-  }
+  ifs.close();
   //
   std::fprintf (stderr, "#keys: %ld\n", trie_->num_keys ());
   std::fprintf (stderr, "size: %ld\n", trie_->size ());
@@ -284,12 +286,12 @@ void TrieSegger::make_dict(const char* word_file,
 /* returns length of next utf-8 sequence */
 
 
-int parse_line(char* line, std::string& word) {
+int parse_line(const char* line, std::string& word) {
   // strip space, \n, \t at both end
   int n = 1;
-  char* p = line;
-  char* word_begin = NULL;
-  char* digit_begin = NULL;
+  const char* p = line;
+  const char* word_begin = NULL;
+  const char* digit_begin = NULL;
   // skip space of line head
   while(*p == ' ' || *p == '\t' ) {
       p++;
@@ -320,18 +322,15 @@ void make_dict(const char* word_file,
     const char* save_file) {
   TrieSegger::trie_value_t n = 1;
   TrieSegger::trie_t dict;
-  FILE* fp = std::fopen (word_file, "r");
-  char* line = NULL;
-  ssize_t read = 0;
-  size_t  size = 0;
+  ifstream ifs(word_file);
   int no_value_cnt = 0;
-  string word;
-  while ((read = getline (&line, &size, fp)) != -1){
+  string line, word;
+  while (!ifs.eof()){
     if(line[0] == '#') {
       std::fprintf(stderr, "comment:%s\n", line);
       continue;
     }
-    n = parse_line(line, word);
+    n = parse_line(line.c_str(), word);
     if (n == 1) no_value_cnt++;
     if(no_value_cnt < 10){
       no_value_cnt++;
@@ -341,8 +340,7 @@ void make_dict(const char* word_file,
       dict.update(word.c_str(), word.size(), n);
     }
   }
-  std::fclose (fp);
-  //
+  ifs.close();
   if (dict.save(save_file) != 0){
     std::fprintf (stderr, "cannot save trie: %s\n", save_file);
     std::exit (1);

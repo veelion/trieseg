@@ -11,7 +11,7 @@ def find(path):
     wf = trieseg.WordFinder(9)
     # wf.load_segger_dict('./z4')
     print('load_segger_dict done')
-    lines = open(path).readlines()
+    lines = open(path, encoding='utf8').readlines()
     for l in lines:
         if len(l.strip()) < 2: continue
         wf.feed(l)

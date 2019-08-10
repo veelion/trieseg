@@ -59,7 +59,7 @@ int split_sentence(const char* doc, std::vector<std::string> &sentences) {
 
 std::string ucs_reverse(const std::string &s) {
   //std::string r (s.size(), 'v');
-  char buf[s.size()+1];
+  char* buf = new char[s.size()+1];
   char* x = buf + s.size();
   const char* p = s.c_str();
   while(*p) {
@@ -68,6 +68,8 @@ std::string ucs_reverse(const std::string &s) {
     memcpy(x, p, i);
     p += i;
   }
-  return std::string(buf, s.size());
+  std::string r = std::string(buf, s.size());
+  delete [] buf;
+  return r;
 }
 #endif

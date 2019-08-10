@@ -8,17 +8,17 @@ All rights reserved.
 #include <iostream>
 #include <fstream>
 #include <map>
+#include <vector>
 #include "utility.h"
 #include "wordfinder.h"
 
 using namespace std;
 
 WordFinder::WordFinder(int ngram)
-    : ngram_(ngram),
-      totalcount_(0) {
+    : ngram_(ngram), totalcount_(0) {
   segger_ = new TrieSegger();
-  trie_forword_ = new trie_t;
-  trie_reverse_ = new trie_t;
+  trie_forword_ = new trie_t();
+  trie_reverse_ = new trie_t();
 }
 
 
@@ -70,7 +70,8 @@ void WordFinder::Feed(const char* doc) {
 
 // to iterate all keys
 uint32_t WordFinder::NextKey(string& key) {
-  static size_t from = 0, p = 0;
+  static cedar::npos_t from = 0;
+  static size_t p = 0;
   union { int i; int x; } b;
   char buf[256] = {0};
   key.clear();
@@ -194,9 +195,7 @@ float WordFinder::CalculateEntropy(const string& token) {
   return right_entropy;
 }
 
-
-void WordFinder::Find(int min_frequency, int min_jointy, int min_entropy,
-    vector<NewWord>& newwords) {
+void WordFinder::FindCore(int min_frequency, int min_jointy, int min_entropy, vector<NewWord> &newwords) {
   cout << "start finding new words..." << endl;
   cout << "totalcount tokens: " << totalcount_ << endl;
   cout << "number of tokens:  " << trie_forword_->num_keys() << endl;
@@ -224,10 +223,9 @@ void WordFinder::Find(int min_frequency, int min_jointy, int min_entropy,
   }
 }
 
-void WordFinder::Find(int min_frequency, int min_jointy, int min_entropy,
-    const char* save_to_path) {
+void WordFinder::Find(int min_frequency, int min_jointy, int min_entropy, const char* save_to_path) {
   vector<NewWord> newwords;
-  Find(min_frequency, min_jointy, min_entropy, newwords);
+  FindCore(min_frequency, min_jointy, min_entropy, newwords);
   ofstream ofs(save_to_path);
   if (!ofs) {
     cout << "Can't open file: " << save_to_path << endl;
