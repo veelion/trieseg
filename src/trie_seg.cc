@@ -61,17 +61,22 @@ void TrieSegger::LoadCustomeWord(const char* path) {
   while (!ifs.eof()){
     getline(ifs, line);
     if(line[0] == '#') {
-      std::fprintf(stderr, "comment:%s\n", line);
+      cout << "comment:" << line << endl;
       continue;
     }
     int n = parse_line(line.c_str(), word);
-    if (n == 1) {
+    if (n == 0) {
       no_value_cnt++;
       if(no_value_cnt < 10){
-        std::fprintf(stderr, "no word's value line: %s\n", line);
+        cout << "no word's value line: " << line << endl;
+        cout << "\t" << word << ", " << n << endl;
       }
     }
-    if (word.size() > 0) {
+    if (word.size() < 3 || word.size() > WORD_MAX_LENGTH) {
+      cout << "=== too short or too long word :" << word << " : " << word.size() << endl;
+    } else {
+      n = sqrt(n);
+      if (n > 65535) n = 65535;
       trie_->update(word.c_str(), word.size(), n);
     }
   }
@@ -93,7 +98,7 @@ int TrieSegger::dict_insert(const char* word, trie_value_t value) {
 
 int TrieSegger::get_token_len(const char* p,
     trie_t::result_pair_type *result) {
-  int count = trie_->commonPrefixSearch(p, result, NUM_RESULT, WORD_MAX_LENGTH);
+  int count = trie_->commonPrefixSearch(p, result, NUM_RESULT, min(WORD_MAX_LENGTH, strlen(p)));
   int len = 0;
   if(count) {
     len = result[count-1].length;
@@ -106,7 +111,7 @@ int TrieSegger::get_token_len(const char* p,
 int TrieSegger::prefix(const char*p, vector<string> &words) {
   // find words with prefix
   // trie_t::result_pair_type result[NUM_RESULT];
-  int count = trie_->commonPrefixSearch(p, result_pair_, NUM_RESULT, WORD_MAX_LENGTH);
+  int count = trie_->commonPrefixSearch(p, result_pair_, NUM_RESULT, min(WORD_MAX_LENGTH, strlen(p)));
   if(count) {
     if (count > NUM_RESULT) {
       cout << CLI_RED << "NUM_RESULT is small for: " << string(p, 30) << endl;
@@ -124,7 +129,7 @@ int TrieSegger::prefix(const char*p, vector<string> &words) {
 
 int TrieSegger::get_dict_value(const string &word) {
   size_t n = trie_->commonPrefixSearch(
-      word.c_str(), result_pair_, NUM_RESULT, WORD_MAX_LENGTH);
+      word.c_str(), result_pair_, NUM_RESULT, word.size());
   int v = 0;
   for(size_t i = 0; i < n; i++) {
     if(result_pair_[i].length == word.size()){
@@ -169,7 +174,7 @@ void TrieSegger::_core(const char* in, vector<string> &out, int match_type) {
   int count = 0;
   while(*p) {
     token_begin = p;
-    count = trie_->commonPrefixSearch(p, result_pair_, NUM_RESULT, WORD_MAX_LENGTH);
+    count = trie_->commonPrefixSearch(p, result_pair_, NUM_RESULT, min(WORD_MAX_LENGTH, strlen(p)));
     if(!count){
       len = u8_seqlen(token_begin);
       if(len == 0) break;
@@ -206,6 +211,7 @@ void TrieSegger::_core(const char* in, vector<string> &out, int match_type) {
         cout << CLI_RED << "NUM_RESULT is small for: " << string(p, 30) << endl;
       }
       if (kMatchMinimum == match_type) {
+        // maximum match
         len = result_pair_[0].length;
         char end = *(token_begin + len - 1);
         char next = *(token_begin + len);
@@ -218,7 +224,6 @@ void TrieSegger::_core(const char* in, vector<string> &out, int match_type) {
         continue;
       }
       if(kMatchMaximum == match_type) {
-        // maximum match
         int idx = count - 1;
         if(count > NUM_RESULT) {
           idx = NUM_RESULT - 1;
@@ -310,10 +315,8 @@ int parse_line(const char* line, std::string& word) {
     while(isdigit(*p)) p++;
     //p[0] = '\0';
     n = atol(digit_begin);
-    n = sqrt(n);
-    if (n > 65535) n = 65535;
   } else {
-    n = 2;
+    n = 0;
   }
   return n;
 }
@@ -327,14 +330,16 @@ void make_dict(const char* word_file,
   string line, word;
   while (!ifs.eof()){
     if(line[0] == '#') {
-      std::fprintf(stderr, "comment:%s\n", line);
+      cout << "comment: " << line << endl;
       continue;
     }
     n = parse_line(line.c_str(), word);
-    if (n == 1) no_value_cnt++;
-    if(no_value_cnt < 10){
+    n = sqrt(n);
+    if (n > 65535) n = 65535;
+    if (n == 0) no_value_cnt++;
+    if (no_value_cnt < 10){
       no_value_cnt++;
-      std::fprintf(stderr, "no word's value line: %s\n", line);
+      cout << "no word's value line: " <<  line << endl;
     }
     if (word.size() > 0) {
       dict.update(word.c_str(), word.size(), n);

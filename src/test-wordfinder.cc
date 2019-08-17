@@ -11,8 +11,9 @@ using namespace std;
 
 int main(int argc, char* argv[]) {
   const char* doc = "吃葡萄不吐葡萄皮不吃葡萄倒吐葡萄皮";
-  if (argc > 1) {
-    const char* text_f = argv[1];
+  if (1) {
+    //const char* text_f = argv[1];
+    const char* text_f = "./doc.txt";
     FILE *fp = fopen(text_f, "r");
     if(!fp){
       cout << "can not open text file: " << text_f << endl;
@@ -29,12 +30,13 @@ int main(int argc, char* argv[]) {
     buf[size] = 0;
     doc = buf;
   }
-  WordFinder wf(8);
-  wf.LoadSeggerDict("./z4");
+  WordFinder wf(5);
+  wf.LoadSeggerDict("./dict.txt");
+  cout << "LoadSeggerDict done" << endl;
   wf.Feed(doc);
 
   vector<NewWord> newwords;
-  wf.FindCore(1, 1, 1, newwords);
+  wf.FindCore(1, 100, 1, newwords);
 
   sort(newwords.begin(), newwords.end(), [](NewWord& a, NewWord& b) { return a.entropy > b.entropy; });
   cout << "newwords: " << newwords.size() << endl;

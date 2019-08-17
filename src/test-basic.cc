@@ -7,6 +7,7 @@
 #include "utf8.h"
 #include "utility.h"
 #include "cedarpp.h"
+#include "trie_seg.h"
 
 using namespace std;
 
@@ -70,6 +71,18 @@ int main(int argc, char* argv[]) {
     string r = ucs_reverse(s);
     cout << s << " -> " << r << endl;
   }
+
+  TrieSegger segger = TrieSegger();
+  segger.LoadCustomeWord("./dict.txt");
+
+  vector<string> words;
+  const char* zz = "人关注了该圆桌";
+  segger.seg2vec(zz, words, 2);
+  cout << zz << " ==> " << endl;
+  for (auto w : words) {
+    cout << "\t" << w << ": " << w.size() << endl;
+  }
+
 
   return 0;
 }

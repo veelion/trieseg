@@ -61,7 +61,7 @@ class TrieSegger {
     trie_t* trie_;
     const char* spliter_ = "|";
     static const int NUM_RESULT = 32;
-    static const int WORD_MAX_LENGTH = 30;
+    const size_t WORD_MAX_LENGTH = 50;
     trie_t::result_pair_type result_pair_[NUM_RESULT];
 
 

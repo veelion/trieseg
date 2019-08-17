@@ -70,7 +70,8 @@ void WordFinder::Feed(const char* doc) {
 
 // to iterate all keys
 uint32_t WordFinder::NextKey(string& key) {
-  static cedar::npos_t from = 0;
+  //static cedar::npos_t from = 0;
+  static size_t from = 0;
   static size_t p = 0;
   union { int i; int x; } b;
   char buf[256] = {0};
@@ -115,7 +116,7 @@ float WordFinder::CalculateJointy(const string& token, int frequency) {
   vector<pair<string, string> > parts;
   GenParts(words, parts);
   int count_a, count_b;
-  float jointy = 1000.0;
+  float jointy = 10000.0;
   for (auto& p : parts) {
     // cout << "token: " << token << ", part: " << p.first << " " << p.second << endl;
     count_a = trie_forword_->exactMatchSearch<trie_value_t>(p.first.c_str(), p.first.size());
