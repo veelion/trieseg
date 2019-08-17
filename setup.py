@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # author: veelion
 
+import setuptools
 from setuptools import setup, Extension
 from setuptools.command.build_ext import build_ext
 import sys
@@ -109,7 +110,7 @@ ext_modules=[
 
 setup(
     name='trieseg',
-    version='0.2',
+    version='0.3',
     author="Veelion Chong",
     author_email="veelion@gmail.com",
     license='MIT',
