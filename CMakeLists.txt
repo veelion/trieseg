@@ -25,5 +25,5 @@ ENDIF(CMAKE_BUILD_TYPE MATCHES "Debug")
 include_directories(/usr/include/python2.7 )
 
 add_executable(segger_test src/test.cpp src/trie_seg.cc)
-add_executable(test-basic src/test-basic.cc src/utf8.cc)
+add_executable(test-basic src/test-basic.cc src/utf8.cc src/trie_seg.cc)
 add_executable(test-wordfinder src/test-wordfinder.cc src/wordfinder.cc src/utf8.cc src/trie_seg.cc)
