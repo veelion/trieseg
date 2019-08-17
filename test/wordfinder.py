@@ -9,12 +9,10 @@ import trieseg
 def find(path):
     print('finding....')
     wf = trieseg.WordFinder(9)
-    # wf.load_segger_dict('./z4')
+    wf.load_segger_dict('./dict.txt')
     print('load_segger_dict done')
-    lines = open(path, encoding='utf8').readlines()
-    for l in lines:
-        if len(l.strip()) < 2: continue
-        wf.feed(l)
+    doc = open(path, encoding='utf8').read()
+    wf.feed(doc)
 
     wf.find(1, 100, 1, 'z.txt')
 
